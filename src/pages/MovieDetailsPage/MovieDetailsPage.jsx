@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, Outlet, useLocation, useParams, useSearchParams } from "react-router-dom";
 import { fetchTrendingMoviesById } from "../../movies-api";
 import css from '../MovieDetailsPage/MovieDetailsPage.module.css'
@@ -7,6 +7,13 @@ export default function MovieDetailsPage () {
     const [error, setError] = useState(false);
     const [loading, setLoading] = useState(false);
     const {movieId} = useParams();
+    
+    const memoSelectedMovie = useMemo(()=>{
+        return selectedMovie;
+    },[selectedMovie]);
+
+    const location = useLocation();
+    const refUrl = useRef(location);
 
     useEffect(()=>{
         setLoading(true);
@@ -23,7 +30,7 @@ export default function MovieDetailsPage () {
     return(selectedMovie && <div className={css.container}>
         {loading && <b>Is loading...</b>}
         {error && <b>Error!</b>}
-        <p><Link >Go back</Link></p>
+        <p><Link to={refUrl.current.state ?? '/'}>Go back</Link></p>
         <div className={css.card_container}>
         <img src={`https://image.tmdb.org/t/p/w200/${selectedMovie.poster_path}`} alt={selectedMovie.title} />
         <div>

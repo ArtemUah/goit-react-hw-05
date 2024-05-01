@@ -1,18 +1,23 @@
 import { FaSearch } from "react-icons/fa";
 import css from '../MoviesPage/MoviesPage.module.css'
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { fetchSearchMovie } from "../../movies-api";
 import MovieList from "../../components/MovieList/MovieList";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useSearchParams } from "react-router-dom";
 
 export default function MoviesPage () {
-    const [value, setValue] = useState('')
     const [searchMovies, setSearchMovies]= useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(false)
-   
-    
-        async function getSearchMovie (newQuery){
+
+    const [searchParams, setSearchParams]= useSearchParams();
+    const searchValue = searchParams.get('query') ?? '';
+
+    function changeSearchValue (newQuery) {
+        searchParams.set('query', newQuery);
+        setSearchParams(searchParams);
+    }
+    async function getSearchMovie (newQuery){
             setLoading(true);
             setError(false);
             try {
@@ -25,20 +30,36 @@ export default function MoviesPage () {
             }
         };
 
-    return (<div>
-        <form className={css.container} onSubmit={(e)=>{
+        useEffect(()=>{
+            if(searchValue === ''){
+                return;
+            };
+            getSearchMovie(searchValue);
+        }, []);
+
+        function onSearch (e) {
             e.preventDefault();
-            getSearchMovie(value);
+            const searchResult = e.target.elements.input.value;
+            if(searchResult.trim() === ''){
+                return;
+            };
+            changeSearchValue(searchResult)
+            getSearchMovie(searchResult);
             e.target.reset();
-        }}>
-        <input onChange={(e=>{
-             setValue(e.target.value)
-        })} name='input' type='text' placeholder="search.."/>
+        };
+
+        const filteredSearchMovies = useMemo(()=>{
+            return searchMovies;
+        },[searchParams, searchMovies]);
+
+    return (<div>
+        <form className={css.container} onSubmit={(e)=> onSearch(e)}>
+        <input name='input' type='text' placeholder="search.."/>
         <button type="submit"><FaSearch/></button>
     </form>
             {loading && <b>Is Loading...</b>}
             {error && <b>Error!</b>}
-            {searchMovies.length > 0 && <MovieList list={searchMovies}/>}
+            {searchMovies.length > 0 && <MovieList list={filteredSearchMovies}/>}
     </div>
         )
 }

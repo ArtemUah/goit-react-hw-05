@@ -36,7 +36,7 @@ export async function fetchReviews (id) {
 }
 
 export async function fetchSearchMovie (searchQuery){
-  const urlSearchMovie = `https://api.themoviedb.org/3/search/movie?query=${searchQuery}&include_adult=false&language=en-US&page=1`
+  const urlSearchMovie = `https://api.themoviedb.org/3/search/movie?query=${searchQuery}`
   const data = await axios.get(urlSearchMovie, options);
   return data;
 }
