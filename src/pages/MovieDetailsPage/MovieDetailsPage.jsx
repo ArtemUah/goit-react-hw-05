@@ -1,20 +1,19 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { Link, Outlet, useLocation, useParams, useSearchParams } from "react-router-dom";
 import { fetchTrendingMoviesById } from "../../movies-api";
-import css from '../MovieDetailsPage/MovieDetailsPage.module.css'
+import css from '../MovieDetailsPage/MovieDetailsPage.module.css';
+
+const defaultImg = '<https://dl-media.viber.com/10/share/2/long/vibes/icon/image/0x0/95e0/5688fdffb84ff8bed4240bcf3ec5ac81ce591d9fa9558a3a968c630eaba195e0.jpg>';
+
 export default function MovieDetailsPage () {
     const [selectedMovie, setSelectedMovie] = useState(null);
     const [error, setError] = useState(false);
     const [loading, setLoading] = useState(false);
     const {movieId} = useParams();
-    
-    const memoSelectedMovie = useMemo(()=>{
-        return selectedMovie;
-    },[selectedMovie]);
 
     const location = useLocation();
-    const refUrl = useRef(location);
-
+    const refUrl = useRef(location.state);
+    
     useEffect(()=>{
         setLoading(true);
         async function getSelectedMovie(id) {
@@ -23,16 +22,18 @@ export default function MovieDetailsPage () {
             setSelectedMovie(movie.data);
             } catch (error) {
                 setError(true);
-            } finally {setLoading(false)}
+            } finally {
+                setLoading(false)}
         };
         getSelectedMovie(movieId);
-    },[movieId])
+    },[]);
+
     return(selectedMovie && <div className={css.container}>
         {loading && <b>Is loading...</b>}
         {error && <b>Error!</b>}
-        <p><Link to={refUrl.current.state ?? '/'}>Go back</Link></p>
+        <p><Link to={refUrl.current ?? '/'}>Go back</Link></p>
         <div className={css.card_container}>
-        <img src={`https://image.tmdb.org/t/p/w200/${selectedMovie.poster_path}`} alt={selectedMovie.title} />
+        <img src={selectedMovie.poster_path ? `https://image.tmdb.org/t/p/w200/${selectedMovie.poster_path}` : defaultImg} alt={selectedMovie.title} />
         <div>
             <h3>{selectedMovie.title}</h3>
             <p>Userscore: {Math.round(selectedMovie.vote_average*10)}%</p>
@@ -49,7 +50,9 @@ export default function MovieDetailsPage () {
             <li><Link to='previews'>Previews</Link></li>
         </ul>
 </div>
+        <Suspense>
         <Outlet/>
+        </Suspense>
     </div>)
 
 }

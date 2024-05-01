@@ -1,15 +1,14 @@
-import { useState } from 'react'
-
-import './App.css'
-import Navigation from '../Navigation/Navigation'
+import { Suspense, lazy, useState } from 'react'
 import { Route, Routes } from 'react-router-dom'
-import HomePage from '../../pages/HomePage/HomePage'
-import MovieDetailsPage from '../../pages/MovieDetailsPage/MovieDetailsPage'
-import MovieCast from '../MovieCast/MovieCast'
-import MovieReviews from '../MovieReviews/MovieReviews'
-import MoviesPage from '../../pages/MoviesPage/MoviesPage'
-import NotFoundPage from '../../pages/NotFoundPage/NotFoundPage'
+import './App.css'
 
+const Navigation = lazy(()=> import('../Navigation/Navigation'));
+const MovieDetailsPage = lazy(()=> import('../../pages/MovieDetailsPage/MovieDetailsPage'));
+const HomePage = lazy(()=>import('../../pages/HomePage/HomePage'));
+const MovieCast = lazy(()=> import('../MovieCast/MovieCast'));
+const MovieReviews = lazy(()=>import('../MovieReviews/MovieReviews'));
+const MoviesPage = lazy(()=> import('../../pages/MoviesPage/MoviesPage'));
+const NotFoundPage = lazy(()=> import('../../pages/NotFoundPage/NotFoundPage'))
 
 function App() {
   const [count, setCount] = useState(0)
@@ -17,6 +16,7 @@ function App() {
   return (
     <div>
       <Navigation />
+      <Suspense fallback={null}>
       <Routes>
         <Route path='/' element={<HomePage/>}/>
         <Route path='/movies' element={<MoviesPage/>}/>
@@ -26,6 +26,7 @@ function App() {
         </Route>
         <Route path='*' element={<NotFoundPage/>}/>
       </Routes>
+      </Suspense>
     </div>
   )
 }

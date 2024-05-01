@@ -11,6 +11,9 @@ export default function MovieReviews () {
     const {movieId} = useParams();
     useEffect(()=>{
     async function getReviews (id){
+        if(!id) {
+            return;
+        }
         setLoading(true)
         try {
             const chosenReview = await fetchReviews(id);
