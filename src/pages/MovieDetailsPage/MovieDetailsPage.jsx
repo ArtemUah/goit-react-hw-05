@@ -26,7 +26,7 @@ export default function MovieDetailsPage () {
                 setLoading(false)}
         };
         getSelectedMovie(movieId);
-    },[]);
+    },[movieId]);
 
     return(selectedMovie && <div className={css.container}>
         {loading && <b>Is loading...</b>}

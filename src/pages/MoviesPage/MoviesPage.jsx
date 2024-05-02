@@ -35,7 +35,7 @@ export default function MoviesPage () {
                 return;
             };
             getSearchMovie(searchValue);
-        }, []);
+        }, [searchValue]);
 
         function onSearch (e) {
             e.preventDefault();
@@ -48,10 +48,6 @@ export default function MoviesPage () {
             e.target.reset();
         };
 
-        const filteredSearchMovies = useMemo(()=>{
-            return searchMovies;
-        },[searchParams, searchMovies]);
-
     return (<div>
         <form className={css.container} onSubmit={(e)=> onSearch(e)}>
         <input name='input' type='text' placeholder="search.."/>
@@ -59,7 +55,7 @@ export default function MoviesPage () {
     </form>
             {loading && <b>Is Loading...</b>}
             {error && <b>Error!</b>}
-            {searchMovies.length > 0 && <MovieList list={filteredSearchMovies}/>}
+            {searchMovies.length > 0 && <MovieList list={searchMovies}/>}
     </div>
         )
 }
