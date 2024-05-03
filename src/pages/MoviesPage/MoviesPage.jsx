@@ -12,7 +12,7 @@ export default function MoviesPage () {
     const [error, setError] = useState(false)
 
     const [searchParams, setSearchParams]= useSearchParams();
-    const searchValue = searchParams.get('query') ?? '';
+    const searchQuery = searchParams.get('query') ?? '';
 
     async function getSearchMovie (newQuery){
             setLoading(true);
@@ -28,11 +28,11 @@ export default function MoviesPage () {
         };
 
         useEffect(()=>{
-            if(searchValue === ''){
+            if(searchQuery === ''){
                 return;
             };
-            getSearchMovie(searchValue);
-        }, [searchValue]);
+            getSearchMovie(searchQuery);
+        }, [searchQuery]);
 
         function onSearch (e) {
             e.preventDefault();
