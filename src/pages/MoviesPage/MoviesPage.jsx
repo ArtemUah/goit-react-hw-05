@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { fetchSearchMovie } from "../../movies-api";
 import MovieList from "../../components/MovieList/MovieList";
 import { Link, useLocation, useSearchParams } from "react-router-dom";
+import { GiConsoleController } from "react-icons/gi";
 
 export default function MoviesPage () {
     const [searchMovies, setSearchMovies]= useState([]);
@@ -13,10 +14,6 @@ export default function MoviesPage () {
     const [searchParams, setSearchParams]= useSearchParams();
     const searchValue = searchParams.get('query') ?? '';
 
-    function changeSearchValue (newQuery) {
-        searchParams.set('query', newQuery);
-        setSearchParams(searchParams);
-    }
     async function getSearchMovie (newQuery){
             setLoading(true);
             setError(false);
@@ -43,8 +40,7 @@ export default function MoviesPage () {
             if(searchResult.trim() === ''){
                 return;
             };
-            changeSearchValue(searchResult)
-            getSearchMovie(searchResult);
+            setSearchParams({query:searchResult});
             e.target.reset();
         };
 
